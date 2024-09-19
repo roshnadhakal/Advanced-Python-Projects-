@@ -21,10 +21,10 @@ This project is a FastAPI application that provides exchange rates for various c
 To start the FastAPI application, run the following command in your terminal:
 
 ```bash
-uvicorn main:app --reload
+uvicorn FASTAPI:app --reload
 ```
 
-Replace `main` with the name of your Python file if it's different.
+Replace `FASTAPI` with the name of your Python file if it's different.
 
 ## Code Explanation
 
