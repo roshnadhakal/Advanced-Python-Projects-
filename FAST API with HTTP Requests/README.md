@@ -6,7 +6,7 @@ This project is a FastAPI application that provides exchange rates for various c
 
 1. **python 3.12.4 or higher**
 
-To run this application, you need to install FastAPI and Uvicorn. Follow these steps:
+  To run this application, you need to install FastAPI and Uvicorn. Follow these steps:
   
 2. **Install FastAPI and Uvicorn**:
    ```bash
