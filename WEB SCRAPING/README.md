@@ -23,7 +23,7 @@ These tasks are scheduled to run at specified times every day using the schedule
 **Requirements**
 
 - Python 3.8 or higher
-- Chrome WebDriver (download it from [here](https://chromedriver.chromium.org/) and ensure it's compatible with your Chrome browser version).
+- Chrome WebDriver (download it from (https://chromedriver.chromium.org/) and ensure it's compatible with your Chrome browser version).
 
 **Python Packages**
 
