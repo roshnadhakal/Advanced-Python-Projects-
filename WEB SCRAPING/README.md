@@ -76,7 +76,7 @@ The fetch_case_details(case_number) function extracts detailed information for a
 
 Tasks are scheduled using the `schedule_tasks()` function. It:
 
-- Automatically fetches and updates the daily case status at **10:30 AM** and **12:34 PM** every day.
+- Automatically fetches and updates the daily case status at **10:30 AM** and **17:30 PM** every day.
 - Fetches details for a list of specific case numbers at the same times.
 
 To start scheduling, run the script, and the scraping will happen at the scheduled times:
