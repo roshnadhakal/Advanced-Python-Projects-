@@ -62,8 +62,8 @@ python your_script_name.py
 
 ## Usage
 
-**Fetch Daily Case Status**
-The fetch_and_store_data() function scrapes the daily case status from the Supreme Court's website and stores it in a CSV file. It:  
+**Fetch Daily Case Status**  
+The fetch_and_store_data() function scrapes the daily case status from the Supreme Court's website and stores it in a CSV file. It:    
 - Extracts a table of daily case types and counts.    
 - Updates the CSV file if it already exists or creates a new one otherwise.  
   
@@ -84,9 +84,9 @@ To start scheduling, run the script, and the scraping will happen at the schedul
 ```bash
 python your_script_name.py
 ```
-**File Structure:**
-daily_case_status.csv: Stores daily case statuses in a table format with Case Type and Count.  
-case_details.json: Contains detailed case information, with the case number as the key.
+**File Structure:**  
+daily_case_status.csv: Stores daily case statuses in a table format with Case Type and Count.   
+case_details.json: Contains detailed case information, with the case number as the key.  
 
 ## Contributing
 Feel free to fork the repository and submit pull requests to improve the code or add new features.   
