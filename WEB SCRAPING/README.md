@@ -33,8 +33,8 @@ Install the required packages by running:
 pip install selenium beautifulsoup4 pandas schedule
 ```
 
-**WebDriver Setup**
-Ensure that the chromedriver executable path is correctly set in the code. Update the following lines with your WebDriver path:  
+**WebDriver Setup**  
+Ensure that the chromedriver executable path is correctly set in the code. Update the following lines with your WebDriver path:    
 ```bash
 service = Service(r'path_to_your_chromedriver')
 ```
