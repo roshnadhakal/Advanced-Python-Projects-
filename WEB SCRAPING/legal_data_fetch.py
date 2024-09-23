@@ -214,15 +214,15 @@ def schedule_tasks():
 
     # Schedule daily case status at 10:30 AM and 5:30 PM Nepal time
     schedule.every().day.at("10:30").do(fetch_and_store_data)
-    schedule.every().day.at("12:51").do(fetch_and_store_data)
+    schedule.every().day.at("17:30").do(fetch_and_store_data)
 
 
     # Schedule case number details at 10:30 AM and 5:30 PM Nepal time
     for case_number in case_numbers:
         schedule.every().day.at("10:30").do(fetch_case_details, case_number)
-        schedule.every().day.at("12:51").do(fetch_case_details, case_number)
+        schedule.every().day.at("17:30").do(fetch_case_details, case_number)
 
-    print("Scraping scheduled for  at 10:30 AM and 12:51 PM.")
+    print("Scraping scheduled for  at 10:30 AM and 5:30 PM.")
 
     while True:
         schedule.run_pending()
