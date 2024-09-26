@@ -1,4 +1,5 @@
 import requests
+import logging # to track the evnts when system runs
 from bs4 import BeautifulSoup
 import time
 import schedule
@@ -11,26 +12,41 @@ from nepali.datetime import nepalidate, parser
 # Suppress the unverified HTTPS request warnings
 warnings.filterwarnings("ignore", message="Unverified HTTPS request")
 
+# Configure logging
+logging.basicConfig(
+    filename='scraping_log.log', 
+    level=logging.INFO, 
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+# Load the case numbers from CSV
+case_numbers_file = 'case_numbers.csv'
+
+# Load the CSV file into a DataFrame
+try:
+    case_numbers_df = pd.read_csv(case_numbers_file)
+    # the case numbers are in a column named 'case numbers'
+    case_numbers = case_numbers_df['case numbers'].dropna().tolist()  # Convert the column to a list, removing any NaNs
+    print(f"Loaded {len(case_numbers)} case numbers from {case_numbers_file}")
+except Exception as e:
+    print(f"Error loading case numbers from CSV: {e}")
+    case_numbers = []  # Set to empty list if loading fails
+
 
 """-----------------------------------FETCH CASE DETAILS FROM CASE NUMBERS-----------------------------------------------"""
 
 # Define the URL of the form
 url = 'https://supremecourt.gov.np/lic/sys.php?d=reports&f=case_details'
 
-# List of case numbers to submit
-case_numbers = [
-    '080-CR-0096', '080-CR-0126', '080-CR-0199', '080-CR-0187', '080-CR-0190',
-    '080-CR-0202', '080-CR-0212', '081-CR-0001', '081-CR-0002'
-]  # Adding the case numbers here
-
-# Create a session to persist parameters across requests
+# Create a session to hold parameters across requests
 session = requests.Session()
 
 # Loop through each case number and submit it
 def fetch_case_details():
+    start_time = time.time()
     all_data = {}
     # Print at the beginning
-    print("Redirected to case details page for case numbers")
+    logging.info("Started fetching case details...")
     # Print at the beginning
     print("saving data....")
     for case_number in case_numbers:
@@ -38,11 +54,11 @@ def fetch_case_details():
         payload = {
             'regno': case_number,    # The case number input
             'mode': 'show',          # Mode set to show
-            'list': 'list'           # List parameter (if applicable)
+            'list': 'list'           # List parameter 
         }
 
         # Send a POST request to submit the form (simulating the button click)
-        response = session.post(url, data=payload, verify='False')
+        response = session.post(url, data=payload, verify= False)
         response.encoding = 'utf-8'
 
         # Check if the submission was successful
@@ -189,6 +205,10 @@ def fetch_case_details():
 
                                 # Save the extracted details
                                 all_data[case_number] = details
+                                # Log the time taken
+                                end_time = time.time()
+                                time_taken = end_time - start_time
+                                logging.info(f"Finished fetching case details in {time_taken:.2f} seconds.")
 
     # Save the data to a JSON file
     filename = 'case_details.json'
@@ -207,17 +227,18 @@ def fetch_case_details():
         json.dump(existing_data, file, ensure_ascii=False, indent=4)
 
     # Print the final message after all data is saved
-    print("Data saved successfully.")
+    print(f"Data saved successfully in {time_taken:.2f} seconds.")
 
 
 """-----------------------------------FETCH AND STORE DAILY CASE STATUS-----------------------------------------------"""
 # Function to fetch daily case status and store in CSV
 def fetch_and_store_data():
-    print("Fetching daily case status...")
+    start_time = time.time()
+    logging.info("Started fetching daily case status...")
     url = 'https://supremecourt.gov.np/web/eng/index'
 
     try:
-        response = requests.get(url, verify=False)
+        response = requests.get(url, verify = False)
         response.raise_for_status()
         html_content = response.text
         soup = BeautifulSoup(html_content, 'html.parser')
@@ -234,8 +255,8 @@ def fetch_and_store_data():
             if len(cols) == 2:
                 data[cols[0]] = {'Count': int(cols[1])}
 
-        df = pd.DataFrame(data).T
-        df.reset_index(inplace=True)
+        df = pd.DataFrame(data).T #transposes df so that cas type becomes column
+        df.reset_index(inplace=True) #resetes the index of dataframe
         df.columns = ['Case Type', 'Count']
         csv_file = 'daily_case_status.csv'
 
@@ -253,21 +274,24 @@ def fetch_and_store_data():
             existing_df.to_csv(csv_file, mode='w', header=True, index=False)
             print("CSV file updated.")
     except requests.RequestException as e:
-        print(f"An error occurred while fetching data: {e}")
+        logging.error(f"Error occurred: {e}")
 
-    print("Daily case status fetching completed.")
+    end_time = time.time()
+    time_taken = end_time - start_time
+    logging.info(f"Finished fetching daily case status in {time_taken:.2f} seconds.")
+    print(f"Daily case status fetching completed in {time_taken:.2f} seconds.")
 
 
 # Function to schedule daily data extraction at a specific time
 def schedule_tasks():
     try:
         # Schedule daily case status at 10:30 AM and 5:30 PM Nepal time
-        schedule.every().day.at("12:12").do(fetch_and_store_data)
-        schedule.every().day.at("17:30").do(fetch_and_store_data)
+        schedule.every().day.at("14:08").do(fetch_and_store_data)
+        schedule.every().day.at("16:23").do(fetch_and_store_data)
 
         # Schedule case number details at 10:30 AM and 5:30 PM Nepal time
-        schedule.every().day.at("12:12").do(fetch_case_details)
-        schedule.every().day.at("17:30").do(fetch_case_details)
+        schedule.every().day.at("14:08").do(fetch_case_details)
+        schedule.every().day.at("16:23").do(fetch_case_details)
 
         print("Scraping scheduled for 10:30 AM and 5:30 PM.")
 
